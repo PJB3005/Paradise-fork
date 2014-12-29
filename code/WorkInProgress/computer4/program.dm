@@ -3,7 +3,7 @@
 Programs are a file that can be executed
 */
 
-/datum/file/program
+/datum/file4/program
 	name					= "Untitled"
 	extension				= "prog"
 	image					= 'icons/ntos/program.png'
@@ -28,21 +28,21 @@ Programs are a file that can be executed
 	var/list/req_one_access = list()						// requires one of these
 
 
-/datum/file/program/New()
+/datum/file4/program/New()
 	..()
 	if(!active_state)
 		active_state = "generic"
 	overlay = image('icons/obj/computer3.dmi',icon_state = active_state)
 
 
-/datum/file/program/proc/decode(text)
+/datum/file4/program/proc/decode(text)
 		//adds line breaks
 		text = replacetext(text, "\n","<BR>")
 		return text
 
 
 
-/datum/file/program/execute(var/datum/file/source)
+/datum/file4/program/execute(var/datum/file/source)
 	if(computer && !computer.stat)
 		computer.program = src
 		computer.req_access = req_access
@@ -59,20 +59,20 @@ Programs are a file that can be executed
 	Standard Topic() for links
 */
 
-/datum/file/program/Topic(href, href_list)
+/datum/file4/program/Topic(href, href_list)
 	return
 
 /*
 	The computer object will transfer all empty-hand calls to the program (this includes AIs, Cyborgs, and Monkies)
 */
-/datum/file/program/proc/interact()
+/datum/file4/program/proc/interact()
 	return
 
 /*
 	Standard receive_signal()
 */
 
-/datum/file/program/proc/receive_signal(var/datum/signal/signal)
+/datum/file4/program/proc/receive_signal(var/datum/signal/signal)
 	return
 /*
 	The computer object will transfer all attackby() calls to the program
@@ -85,14 +85,14 @@ Programs are a file that can be executed
 */
 
 
-/datum/file/program/proc/attackby(O as obj, user as mob)
+/datum/file4/program/proc/attackby(O as obj, user as mob)
 	return
 
 /*
 	Try not to overwrite this proc, I'd prefer we stayed
 	with interact() as the main proc
 */
-/datum/file/program/proc/attack_hand(mob/user as mob)
+/datum/file4/program/proc/attack_hand(mob/user as mob)
 	usr = user
 	interact()
 
@@ -106,7 +106,7 @@ Programs are a file that can be executed
 	The popup window's title is a reference to the computer, making it unique, so
 	it could introduce bugs in that case.
 */
-/datum/file/program/proc/Reset()
+/datum/file4/program/proc/Reset()
 	error = 0
 	update_icon()
 	if(popup)
@@ -117,15 +117,15 @@ Programs are a file that can be executed
 /*
 	The computer object will transfer process() calls to the program.
 */
-/datum/file/program/proc/process()
+/datum/file4/program/proc/process()
 	if(refresh && computer && !computer.stat)
 		computer.updateDialog()
 		update_icon()
 
-/datum/file/program/proc/update_icon()
+/datum/file4/program/proc/update_icon()
 	return
 
-/datum/file/program/proc/check_access(obj/item/I)
+/datum/file4/program/proc/check_access(obj/item/I)
 	if( (!istype(req_access) || !req_access.len) && (!istype(req_one_access) || !req_one_access.len) ) //no requirements
 		return 1
 
@@ -149,7 +149,7 @@ Programs are a file that can be executed
 	Because this does sanity checks I have added the code to make a popup here.
 	It also does sanity checks there that should prevent some edge case madness.
 */
-/datum/file/program/proc/interactable(var/mob/user = usr)
+/datum/file4/program/proc/interactable(var/mob/user = usr)
 	if(computer && computer.interactable(user))
 		if(!popup)
 			popup = new(user, "\ref[computer]", name, nref=src)
@@ -163,7 +163,7 @@ Programs are a file that can be executed
 	return 0
 
 
-/datum/file/program/proc/fake_link(var/text)
+/datum/file4/program/proc/fake_link(var/text)
 	return "<span class='linkOff'>[text]</span>"
 
 /*
@@ -176,7 +176,7 @@ Programs are a file that can be executed
 	If you cause runtimes with this function
 	may the shame of all ages come upon you.
 */
-/datum/file/program/proc/list_all_files_by_drive(var/typekey,var/linkop = "runfile")
+/datum/file4/program/proc/list_all_files_by_drive(var/typekey,var/linkop = "runfile")
 	var/dat = ""
 	if(!typekey) typekey = /datum/file
 	if(computer.hdd)
@@ -210,7 +210,7 @@ Programs are a file that can be executed
 
 // You don't NEED to use this version of topic() for this, you can do it yourself if you prefer
 // If you do, do the interactable() check first, please, I don't want to repeat it here.  It's not hard.
-/datum/file/program/Topic(var/href,var/list/href_list)
+/datum/file4/program/Topic(var/href,var/list/href_list)
 	if(!computer)
 		return 0
 
@@ -260,138 +260,138 @@ Programs are a file that can be executed
 	return 0
 
 
-/datum/file/program/RD
+/datum/file4/program/RD
 	name = "R&D Manager"
 	image = 'icons/ntos/research.png'
 	desc = "A software suit for generic research and development machinery interaction. Comes pre-packaged with extensive cryptographic databanks for secure connections with external devices."
 	active_state = "rdcomp"
 	volume = 11000
 
-/datum/file/program/RDserv
+/datum/file4/program/RDserv
 	name = "R&D Server"
 	image = 'icons/ntos/server.png'
 	active_state = "rdcomp"
 	volume = 9000
 
-/datum/file/program/SuitSensors
+/datum/file4/program/SuitSensors
 	name = "Crew Monitoring"
 	image = 'icons/ntos/monitoring.png'
 	active_state = "crew"
 	volume = 3400
 
-/datum/file/program/Genetics
+/datum/file4/program/Genetics
 	name = "Genetics Suite"
 	image = 'icons/ntos/genetics.png'
 	desc = "A sophisticated software suite containing read-only genetics hardware specifications and a highly compressed genome databank."
 	active_state = "dna"
 	volume = 8000
 
-/datum/file/program/Cloning
+/datum/file4/program/Cloning
 	name = "Cloning Platform"
 	image = 'icons/ntos/cloning.png'
 	desc = "A software platform for accessing external cloning apparatus."
 	active_state = "dna"
 	volume = 7000
 
-/datum/file/program/TCOMmonitor
+/datum/file4/program/TCOMmonitor
 	name = "TComm Monitor"
 	image = 'icons/ntos/tcomms.png'
 	active_state = "comm_monitor"
 	volume = 5500
 
-/datum/file/program/TCOMlogs
+/datum/file4/program/TCOMlogs
 	name = "TComm Log View"
 	image = 'icons/ntos/tcomms.png'
 	active_state = "comm_logs"
 	volume = 5230
 
-/datum/file/program/TCOMtraffic
+/datum/file4/program/TCOMtraffic
 	name = "TComm Traffic"
 	image = 'icons/ntos/tcomms.png'
 	active_state = "generic"
 	volume = 8080
 
-/datum/file/program/securitycam
+/datum/file4/program/securitycam
 	name = "Sec-Cam Viewport"
 	image = 'icons/ntos/camera.png'
 	drm = 1
 	active_state = "cameras"
 	volume = 2190
 
-/datum/file/program/securityrecords
+/datum/file4/program/securityrecords
 	name = "Security Records"
 	image = 'icons/ntos/records.png'
 	drm = 1
 	active_state = "security"
 	volume = 2520
 
-/datum/file/program/medicalrecords
+/datum/file4/program/medicalrecords
 	name = "Medical Records"
 	image = 'icons/ntos/medical.png'
 	drm = 1
 	active_state = "medcomp"
 	volume = 5000
 
-/datum/file/program/SMSmonitor
+/datum/file4/program/SMSmonitor
 	name = "Messaging Monitor"
 	image = 'icons/ntos/pda.png'
 	active_state = "comm_monitor"
 	volume = 3070
 
-/datum/file/program/OperationMonitor
+/datum/file4/program/OperationMonitor
 	name = "OR Monitor"
 	image = 'icons/ntos/operating.png'
 	active_state = "operating"
 	volume = 4750
 
-/datum/file/program/PodLaunch
+/datum/file4/program/PodLaunch
 	name = "Pod Launch"
 	active_state = "computer_generic"
 	volume = 520
 
-/datum/file/program/powermon
+/datum/file4/program/powermon
 	name = "Power Grid"
 	image = 'icons/ntos/power.png'
 	active_state = "power"
 	volume = 7200
 
-/datum/file/program/prisoner
+/datum/file4/program/prisoner
 	name = "Prisoner Control"
 	image = 'icons/ntos/prison.png'
 	drm = 1
 	active_state = "power"
 	volume = 5000
 
-/datum/file/program/borg_control
+/datum/file4/program/borg_control
 	name = "Cyborg Maint"
 	image = 'icons/ntos/borgcontrol.png'
 	active_state = "robot"
 	volume = 9050
 
-/datum/file/program/AIupload
+/datum/file4/program/AIupload
 	name = "AI Upload"
 	image = 'icons/ntos/aiupload.png'
 	active_state = "command"
 	volume = 5000
 
-/datum/file/program/Cyborgupload
+/datum/file4/program/Cyborgupload
 	name = "Cyborg Upload"
 	image = 'icons/ntos/borgupload.png'
 	active_state = "command"
 	volume = 5000
 
-/datum/file/program/Exosuit
+/datum/file4/program/Exosuit
 	name = "Exosuit Monitor"
 	image = 'icons/ntos/exocontrol.png'
 	active_state = "mecha"
 	volume = 7000
 
-/datum/file/program/EmergencyShuttle
+/datum/file4/program/EmergencyShuttle
 	name = "Shuttle Console"
 	active_state = "shuttle"
 	volume = 10000
 
-/datum/file/program/Stationalert
+/datum/file4/program/Stationalert
 	name = "Alert Monitor"
 	image = 'icons/ntos/alerts.png'
 	active_state = "computer_generic"

@@ -2,7 +2,7 @@
 	Computer devices that can store programs, files, etc.
 */
 
-/obj/item/part/computer/storage
+/obj/item/part/computer4/storage
 	name			= "Storage Device"
 	desc			= "A device used for storing and retrieving digital information."
 
@@ -71,18 +71,18 @@
 	Standard hard drives for computers. Used in computer construction
 */
 
-/obj/item/part/computer/storage/hdd
+/obj/item/part/computer4/storage/hdd
 	name = "Hard Drive"
 	max_volume = 25000
 	icon_state = "hdd1"
 
 
-/obj/item/part/computer/storage/hdd/big
+/obj/item/part/computer4/storage/hdd/big
 	name = "Big Hard Drive"
 	max_volume = 50000
 	icon_state = "hdd2"
 
-/obj/item/part/computer/storage/hdd/gigantic
+/obj/item/part/computer4/storage/hdd/gigantic
 	name = "Gigantic Hard Drive"
 	max_volume = 75000
 	icon_state = "hdd3"
@@ -91,7 +91,7 @@
 	Removeable hard drives for portable storage
 */
 
-/obj/item/part/computer/storage/removable
+/obj/item/part/computer4/storage/removable
 	name = "Disk Drive"
 	max_volume = 3000
 	removeable = 1

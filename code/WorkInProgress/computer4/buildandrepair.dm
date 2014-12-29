@@ -1,5 +1,5 @@
 // Computer3 circuitboard specifically
-/obj/item/part/computer/circuitboard
+/obj/item/part/computer4/circuitboard
 	density = 0
 	anchored = 0
 	w_class = 2.0
@@ -19,11 +19,11 @@
 
 	var/datum/file/program/OS = new/datum/file/program/ntos
 
-/obj/machinery/computer3/proc/disassemble(mob/user as mob) // todo
+/obj/machinery/computer4/proc/disassemble(mob/user as mob) // todo
 	return
 
 
-/obj/structure/computer3frame
+/obj/structure/computer4frame
 	density = 1
 	anchored = 0
 	name = "computer frame"
@@ -31,7 +31,7 @@
 	icon_state = "0"
 	var/state = 0
 
-	var/obj/item/part/computer/circuitboard/circuit = null
+	var/obj/item/part/computer4/circuitboard/circuit = null
 	var/completed = /obj/machinery/computer
 
 	// Computer3 components - a carbon copy of the list from
@@ -43,40 +43,40 @@
 	var/list/components = list()
 
 	// Storage
-	var/obj/item/part/computer/storage/hdd/hdd				= null
-	var/obj/item/part/computer/storage/removable/floppy		= null
+	var/obj/item/part/computer4/storage/hdd/hdd				= null
+	var/obj/item/part/computer4/storage/removable/floppy		= null
 	// Networking
-	var/obj/item/part/computer/networking/radio/radio		= null	// not handled the same as other networks
-	var/obj/item/part/computer/networking/cameras/camnet	= null	// just plain special
-	var/obj/item/part/computer/networking/net				= null	// Proximity, area, or cable network
-	var/obj/item/part/computer/networking/subspace/centcom	= null	// only for offstation communications
+	var/obj/item/part/computer4/networking/radio/radio		= null	// not handled the same as other networks
+	var/obj/item/part/computer4/networking/cameras/camnet	= null	// just plain special
+	var/obj/item/part/computer4/networking/net				= null	// Proximity, area, or cable network
+	var/obj/item/part/computer4/networking/subspace/centcom	= null	// only for offstation communications
 
 	// Card reader - note the HoP reader is a subtype
-	var/obj/item/part/computer/cardslot/cardslot			= null
+	var/obj/item/part/computer4/cardslot/cardslot			= null
 
 	// Misc & special purpose
-	var/obj/item/part/computer/ai_holder/cradle				= null
-	var/obj/item/part/computer/toybox/toybox				= null
+	var/obj/item/part/computer4/ai_holder/cradle				= null
+	var/obj/item/part/computer4/toybox/toybox				= null
 
 	// Battery must be installed BEFORE wiring the computer.
 	// if installing it in an existing computer, you will have to
 	// get back to this state first.
 	var/obj/item/weapon/cell/battery	= null
 
-/obj/structure/computer3frame/server
+/obj/structure/computer4frame/server
 	name = "server frame"
-	completed = /obj/machinery/computer3/server
+	completed = /obj/machinery/computer4/server
 	max_components = 6
-/obj/structure/computer3frame/wallcomp
+/obj/structure/computer4frame/wallcomp
 	name = "wall-computer frame"
-	completed = /obj/machinery/computer3/wall_comp
+	completed = /obj/machinery/computer4/wall_comp
 	max_components = 3
-/obj/structure/computer3frame/laptop
+/obj/structure/computer4frame/laptop
 	name = "laptop frame"
-	completed = /obj/machinery/computer3/laptop
+	completed = /obj/machinery/computer4/laptop
 	max_components = 3
 
-/obj/structure/computer3frame/attackby(obj/item/P as obj, mob/user as mob)
+/obj/structure/computer4frame/attackby(obj/item/P as obj, mob/user as mob)
 	switch(state)
 		if(0)
 			if(istype(P, /obj/item/weapon/wrench))
@@ -218,7 +218,7 @@
 	This will remove peripherals if you specify one, but the main function is to
 	allow the user to remove a part specifically.
 */
-/obj/structure/computer3frame/proc/remove_peripheral(var/obj/item/I = null)
+/obj/structure/computer4frame/proc/remove_peripheral(var/obj/item/I = null)
 	if(!components || !components.len)
 		usr << "\red There are no components in [src] to take out!"
 		return 0
@@ -262,40 +262,40 @@
 			usr << "\blue You remove [I]"
 			return 1
 	return 0
-/obj/structure/computer3frame/proc/insert_peripheral(var/obj/item/I)
+/obj/structure/computer4frame/proc/insert_peripheral(var/obj/item/I)
 	if(components.len >= max_components)
 		usr << "There isn't room in [src] for another component!"
 		return 0
 	switch(I.type)
-		if(/obj/item/part/computer/storage/hdd)
+		if(/obj/item/part/computer4/storage/hdd)
 			if(hdd)
 				usr << "There is already \an [hdd] in [src]!"
 				return 0
 			hdd = I
 			components += hdd
 			hdd.loc = src
-		if(/obj/item/part/computer/storage/removable)
+		if(/obj/item/part/computer4/storage/removable)
 			if(floppy)
 				usr << "There is already \an [floppy] in [src]!"
 				return 0
 			floppy = I
 			components += floppy
 			floppy.loc = src
-		if(/obj/item/part/computer/networking/radio)
+		if(/obj/item/part/computer4/networking/radio)
 			if(radio)
 				usr << "There is already \an [radio] in [src]!"
 				return 0
 			radio = I
 			components += radio
 			radio.loc = src
-		if(/obj/item/part/computer/networking/cameras)
+		if(/obj/item/part/computer4/networking/cameras)
 			if(camnet)
 				usr << "There is already \an [camnet] in [src]!"
 				return 0
 			camnet = I
 			components += camnet
 			camnet.loc = src
-		if(/obj/item/part/computer/networking)
+		if(/obj/item/part/computer4/networking)
 			if(net)
 				usr << "There is already \an [net] in [src]!"
 

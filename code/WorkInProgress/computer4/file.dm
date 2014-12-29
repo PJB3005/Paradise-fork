@@ -6,13 +6,13 @@
 	Files are datums that can be stored in digital storage devices
 */
 
-/datum/file
+/datum/file4
 	var/name = "File"
 	var/extension = "dat"
 	var/volume = 10 // in KB
 	var/image = 'icons/ntos/file.png' // determines the icon to use, found in icons/ntos
-	var/obj/machinery/computer3/computer // the parent computer, if fixed
-	var/obj/item/part/computer/storage/device // the device that is containing this file
+	var/obj/machinery/computer4/computer // the parent computer, if fixed
+	var/obj/item/part/computer4/storage/device // the device that is containing this file
 	var/hidden_file = 0 // Prevents file from showing up on NTOS program list.
 	var/drm	= 0			// Copy protection, called by copy() and move()
 	var/readonly = 0	// Edit protection, called by edit(), which is just a failcheck proc
@@ -24,7 +24,7 @@
 	// Copy file to device.
 	// If you overwrite this function, use the return value to make sure it succeeded
 	//
-	proc/copy(var/obj/item/part/computer/storage/dest)
+	proc/copy(var/obj/item/part/computer4/storage/dest)
 		if(!computer || computer.crit_fail) return null
 		if(drm)
 			if(!computer.emagged)
@@ -38,12 +38,12 @@
 	// Move file to device
 	// Returns null on failure even though the existing file doesn't go away
 	//
-	proc/move(var/obj/item/part/computer/storage/dest)
+	proc/move(var/obj/item/part/computer4/storage/dest)
 		if(!computer || computer.crit_fail) return null
 		if(drm)
 			if(!computer.emagged)
 				return null
-		var/obj/item/part/computer/storage/current = device
+		var/obj/item/part/computer4/storage/current = device
 		if(!dest.addfile(src))
 			return null
 		current.removefile(src)
@@ -67,7 +67,7 @@
 	Non-destructive, officially sanctioned.
 	Has the same effect on computers as an emag.
 */
-/datum/file/centcom_auth
+/datum/file4/centcom_auth
 	name = "Centcom Root Access Token"
 	extension = "auth"
 	volume = 100
@@ -78,7 +78,7 @@
 	A file that contains information
 */
 
-/datum/file/data
+/datum/file4/data
 
 	var/content			= "content goes here"
 	var/file_increment	= 1
@@ -105,14 +105,14 @@
 	A generic file that contains text
 */
 
-/datum/file/data/text
+/datum/file4/data/text
 	name = "Text File"
 	extension = "txt"
 	image = 'icons/ntos/file.png'
 	content = ""
 	file_increment = 0.002 // 0.002 kilobytes per character (1024 characters per KB)
 
-/datum/file/data/text/ClownProphecy
+/datum/file4/data/text/ClownProphecy
 	name = "Clown Prophecy"
 	content = "HONKhHONKeHONKlHONKpHONKHONmKHONKeHONKHONKpHONKlHONKeHONKaHONKsHONKe"
 
@@ -121,7 +121,7 @@
 	A file that contains research
 */
 
-/datum/file/data/research
+/datum/file4/data/research
 	name = "Untitled Research"
 	binary = 1
 	content = "Untitled Tier X Research"
@@ -132,17 +132,17 @@
 	A file that contains genetic information
 */
 
-/datum/file/data/genome
+/datum/file4/data/genome
 	name = "Genetic Buffer"
 	binary = 1
 	var/real_name = "Poop"
 
 
-/datum/file/data/genome/SE
+/datum/file4/data/genome/SE
 	name = "Structural Enzymes"
 	var/mutantrace = null
 
-/datum/file/data/genome/UE
+/datum/file4/data/genome/UE
 	name = "Unique Enzymes"
 
 /*
@@ -150,17 +150,17 @@ the way genome computers now work, a subtype is the wrong way to do this;
 it will no longer be picked up.  You can change this later if you need to.
 for now put it on a disk
 
-/datum/file/data/genome/UE/GodEmperorOfMankind
+/datum/file4/data/genome/UE/GodEmperorOfMankind
 	name = "G.E.M.K."
 	content = "066000033000000000AF00330660FF4DB002690"
 	label = "God Emperor of Mankind"
 */
-/datum/file/data/genome/UI
+/datum/file4/data/genome/UI
 	name = "Unique Identifier"
 
-/datum/file/data/genome/UI/UE
+/datum/file4/data/genome/UI/UE
 	name = "Unique Identifier + Unique Enzymes"
 
-/datum/file/data/genome/cloning
+/datum/file4/data/genome/cloning
 	name = "Cloning Data"
 	var/datum/data/record/record

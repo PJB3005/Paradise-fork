@@ -7,7 +7,7 @@
 	That should at least allow sensible debugging.
 */
 
-/obj/machinery/computer3
+/obj/machinery/computer4
 
 	/*
 		interactable(user): performs all standard sanity checks

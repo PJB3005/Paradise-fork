@@ -21,7 +21,7 @@
 
 	var/default_prog		= null											// the program running when spawned
 	var/list/spawn_files	= list()										// files added when spawned
-	var/list/spawn_parts	= list(/obj/item/part/computer/storage/hdd/big)	// peripherals to spawn
+	var/list/spawn_parts	= list(/obj/item/part/computer4/storage/hdd/big)	// peripherals to spawn
 
 	// Computer3 components - put an object in them in New() when not built
 	// I used to have a more pliable /list, but the ambiguities
@@ -29,22 +29,22 @@
 	// when you had to search the list to find what you had.
 
 	// Mostly decorative, holds the OS rom
-	var/obj/item/part/computer/circuitboard/circuit
+	var/obj/item/part/computer4/circuitboard/circuit
 
 	// Storage
-	var/obj/item/part/computer/storage/hdd/hdd				= null
-	var/obj/item/part/computer/storage/removable/floppy		= null
+	var/obj/item/part/computer4/storage/hdd/hdd				= null
+	var/obj/item/part/computer4/storage/removable/floppy		= null
 	// Networking
-	var/obj/item/part/computer/networking/radio/radio		= null	// not handled the same as other networks
-	var/obj/item/part/computer/networking/cameras/camnet	= null	// just plain special
-	var/obj/item/part/computer/networking/net				= null	// Proximity, area, or cable network
+	var/obj/item/part/computer4/networking/radio/radio		= null	// not handled the same as other networks
+	var/obj/item/part/computer4/networking/cameras/camnet	= null	// just plain special
+	var/obj/item/part/computer4/networking/net				= null	// Proximity, area, or cable network
 
 	// Card reader - note the HoP reader is a subtype
-	var/obj/item/part/computer/cardslot/cardslot			= null
+	var/obj/item/part/computer4/cardslot/cardslot			= null
 
 	// Misc & special purpose
-	var/obj/item/part/computer/ai_holder/cradle				= null
-	var/obj/item/part/computer/toybox/toybox				= null
+	var/obj/item/part/computer4/ai_holder/cradle				= null
+	var/obj/item/part/computer4/toybox/toybox				= null
 	var/mob/living/silicon/ai/occupant						= null
 
 
@@ -142,43 +142,43 @@
 	proc/spawn_parts()
 		for(var/typekey in spawn_parts)
 
-			if(ispath(typekey,/obj/item/part/computer/storage/removable))
+			if(ispath(typekey,/obj/item/part/computer4/storage/removable))
 				if(floppy) continue
 				floppy = new typekey(src)
 				floppy.init(src)
 				continue
-			if(ispath(typekey,/obj/item/part/computer/storage/hdd))
+			if(ispath(typekey,/obj/item/part/computer4/storage/hdd))
 				if(hdd) continue
 				hdd = new typekey(src)
 				hdd.init(src)
 				continue
 
-			if(ispath(typekey,/obj/item/part/computer/networking/cameras))
+			if(ispath(typekey,/obj/item/part/computer4/networking/cameras))
 				if(camnet) continue
 				camnet = new typekey(src)
 				camnet.init(src)
 				continue
-			if(ispath(typekey,/obj/item/part/computer/networking/radio))
+			if(ispath(typekey,/obj/item/part/computer4/networking/radio))
 				if(radio) continue
 				radio = new typekey(src)
 				radio.init(src)
 				continue
-			if(ispath(typekey,/obj/item/part/computer/networking))
+			if(ispath(typekey,/obj/item/part/computer4/networking))
 				if(net) continue
 				net = new typekey(src)
 				net.init(src)
 				continue
 
-			if(ispath(typekey,/obj/item/part/computer/cardslot))
+			if(ispath(typekey,/obj/item/part/computer4/cardslot))
 				if(cardslot) continue
 				cardslot = new typekey(src)
 				cardslot.init(src)
 				continue
-			if(ispath(typekey,/obj/item/part/computer/ai_holder))
+			if(ispath(typekey,/obj/item/part/computer4/ai_holder))
 				if(cradle) continue
 				cradle = new typekey(src)
 				cradle.init(src)
-			if(ispath(typekey,/obj/item/part/computer/toybox))
+			if(ispath(typekey,/obj/item/part/computer4/toybox))
 				if(toybox) continue
 				toybox = new typekey(src)
 				toybox.init(src)
@@ -329,11 +329,11 @@
 		var/list/peripherals = list(hdd,floppy,radio,net,cardslot,cradle) //camnet, toybox removed
 
 		var/list/p_list = list()
-		for(var/obj/item/part/computer/C in peripherals)
+		for(var/obj/item/part/computer4/C in peripherals)
 			if(!isnull(C) && C.allow_attackby(I,user))
 				p_list += C
 		if(p_list.len)
-			var/obj/item/part/computer/P = null
+			var/obj/item/part/computer4/P = null
 			if(p_list.len == 1)
 				P = p_list[1]
 			else
@@ -458,7 +458,7 @@
 
 
 
-/obj/machinery/computer3/wall_comp
+/obj/machinery/computer4/wall_comp
 	name			= "terminal"
 	icon			= 'icons/obj/computer3.dmi'
 	icon_state		= "wallframe"

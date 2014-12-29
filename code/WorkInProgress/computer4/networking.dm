@@ -1,3 +1,4 @@
+/*
 /obj/item/part/computer/networking
 	name = "Computer networking component"
 
@@ -233,4 +234,4 @@
 			if(C.d1 == 0 && (C.powernet == P))
 				return 1
 		return 0
-
+*/
