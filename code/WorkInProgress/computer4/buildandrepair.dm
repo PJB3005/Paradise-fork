@@ -71,10 +71,10 @@
 	name = "wall-computer frame"
 	completed = /obj/machinery/computer4/wall_comp
 	max_components = 3
-/obj/structure/computer4frame/laptop
+/*/obj/structure/computer4frame/laptop
 	name = "laptop frame"
 	completed = /obj/machinery/computer4/laptop
-	max_components = 3
+	max_components = 3*/
 
 /obj/structure/computer4frame/attackby(obj/item/P as obj, mob/user as mob)
 	switch(state)

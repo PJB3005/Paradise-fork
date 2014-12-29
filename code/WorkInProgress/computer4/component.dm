@@ -230,3 +230,36 @@
 	name	= "magnetic card reader"
 	desc	= "Contains slots for inserting magnetic swipe cards for reading and writing."
 	dualslot = 1
+
+/obj/item/part/computer4/toybox
+	var/list/prizes = list(	/obj/item/weapon/storage/box/snappops			= 2,
+							/obj/item/toy/blink								= 2,
+							/obj/item/clothing/under/syndicate/tacticool	= 2,
+							/obj/item/toy/sword								= 2,
+							/obj/item/toy/gun								= 2,
+							/obj/item/toy/crossbow							= 2,
+							/obj/item/clothing/suit/syndicatefake			= 2,
+							/obj/item/weapon/storage/fancy/crayons			= 2,
+							/obj/item/toy/spinningtoy						= 2,
+							/obj/item/toy/prize/ripley						= 1,
+							/obj/item/toy/prize/fireripley					= 1,
+							/obj/item/toy/prize/deathripley					= 1,
+							/obj/item/toy/prize/gygax						= 1,
+							/obj/item/toy/prize/durand						= 1,
+							/obj/item/toy/prize/honk						= 1,
+							/obj/item/toy/prize/marauder					= 1,
+							/obj/item/toy/prize/seraph						= 1,
+							/obj/item/toy/prize/mauler						= 1,
+							/obj/item/toy/prize/odysseus					= 1,
+							/obj/item/toy/prize/phazon						= 1
+							)
+	proc/dispense()
+		if(computer && !computer.stat)
+			var/prizeselect = pickweight(prizes)
+			new prizeselect(computer.loc)
+			if(istype(prizeselect, /obj/item/toy/gun)) //Ammo comes with the gun
+				new /obj/item/toy/ammo/gun(computer.loc)
+			else if(istype(prizeselect, /obj/item/clothing/suit/syndicatefake)) //Helmet is part of the suit
+				new	/obj/item/clothing/head/syndicatefake(computer.loc)
+			feedback_inc("arcade_win_normal")
+			computer.use_power(500)

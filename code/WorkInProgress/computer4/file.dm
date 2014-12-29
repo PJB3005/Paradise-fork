@@ -1,6 +1,3 @@
-// I am deciding that for sayustation's purposes directories are right out,
-// we can't even get backpacks to work right with recursion, and that
-// actually fucking matters.  Metadata too, that can be added if ever needed.
 
 /*
 	Files are datums that can be stored in digital storage devices
@@ -13,6 +10,7 @@
 	var/image = 'icons/ntos/file.png' // determines the icon to use, found in icons/ntos
 	var/obj/machinery/computer4/computer // the parent computer, if fixed
 	var/obj/item/part/computer4/storage/device // the device that is containing this file
+	var/datum/folder/folder //folder the program is in
 	var/hidden_file = 0 // Prevents file from showing up on NTOS program list.
 	var/drm	= 0			// Copy protection, called by copy() and move()
 	var/readonly = 0	// Edit protection, called by edit(), which is just a failcheck proc

@@ -1,4 +1,4 @@
-
+/*
 
 /obj/item/weapon/disk/file4/arcade
 	name = "Arcade game grab pack"
@@ -41,4 +41,6 @@
 	icon = 'icons/obj/stock_parts.dmi'
 	icon_state = "datadisk_arcade"
 	spawn_files = list(/datum/file4/program/cloning,/datum/file4/program/dnascanner)
+*/
+
 */

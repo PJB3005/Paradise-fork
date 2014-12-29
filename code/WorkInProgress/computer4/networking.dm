@@ -1,5 +1,5 @@
-/*
-/obj/item/part/computer/networking
+
+/obj/item/part/computer4/networking
 	name = "Computer networking component"
 
 	/*
@@ -60,7 +60,7 @@
 	network-connects to anything on the same z-level
 	which is tuned to the same frequency.
 */
-/obj/item/part/computer/networking/radio
+/obj/item/part/computer4/networking/radio
 	name = "Wireless networking component"
 	desc = "Radio module for computers"
 
@@ -124,7 +124,7 @@
 /*
 	Subspace networking: Communicates off-station.  Allows centcom communications.
 */
-/obj/item/part/computer/networking/radio/subspace
+/obj/item/part/computer4/networking/radio/subspace
 	name = "subspace networking terminal"
 	desc = "Communicates long distances and through spatial anomalies."
 	subspace = 1
@@ -133,7 +133,7 @@
 	APC (/area) networking
 */
 
-/obj/item/part/computer/networking/area
+/obj/item/part/computer4/networking/area
 	name = "short-wave networking terminal"
 	desc = "Connects to nearby computers through the area power network"
 
@@ -159,7 +159,7 @@
 /*
 	Proximity networking: Connects to machines or computers adjacent to this device
 */
-/obj/item/part/computer/networking/prox
+/obj/item/part/computer4/networking/prox
 	name = "proximity networking terminal"
 	desc = "Connects a computer to adjacent machines"
 
@@ -187,12 +187,12 @@
 	Cable networking: Not currently used
 */
 
-/obj/item/part/computer/networking/cable
+/obj/item/part/computer4/networking/cable
 	name = "cable networking terminal"
 	desc = "Connects to other machines on the same cable network."
 
 	get_machines(var/typekey)
-//		if(istype(computer,/obj/machinery/computer/laptop)) // laptops move, this could get breaky
+//		if(istype(computer,/obj/machinery/computer4/laptop)) // laptops move, this could get breaky
 //			return list()
 		var/turf/T = get_turf(loc)
 		var/datum/powernet/P = null
@@ -234,4 +234,4 @@
 			if(C.d1 == 0 && (C.powernet == P))
 				return 1
 		return 0
-*/
+
