@@ -17,7 +17,7 @@
 	var/list/records = null
 	var/frame_desc = null
 
-	var/datum/file/program/OS = new/datum/file/program/ntos
+	var/datum/file/program/OS = new/datum/file4/program/ntos
 
 /obj/machinery/computer4/proc/disassemble(mob/user as mob) // todo
 	return
@@ -34,7 +34,7 @@
 	var/obj/item/part/computer4/circuitboard/circuit = null
 	var/completed = /obj/machinery/computer
 
-	// Computer3 components - a carbon copy of the list from
+	// Computer4 components - a carbon copy of the list from
 	// computer.dm; however, we will need to check to make sure
 	// we don't install more components than the computer frame
 	// can handle.  This will be different for certain formfactors.
@@ -198,7 +198,7 @@
 			if(istype(P, /obj/item/weapon/screwdriver))
 				playsound(src.loc, 'sound/items/Screwdriver.ogg', 50, 1)
 				user << "\blue You connect the monitor."
-				var/obj/machinery/computer3/B = new src.circuit.build_path ( src.loc, built=1 )
+				var/obj/machinery/computer4/B = new src.circuit.build_path ( src.loc, built=1 )
 				/*if(circuit.powernet) B:powernet = circuit.powernet
 				if(circuit.id) B:id = circuit.id
 				//if(circuit.records) B:records = circuit.records
