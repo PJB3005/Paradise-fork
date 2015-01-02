@@ -9,8 +9,9 @@
 	var/volume = 10 // in KB
 	var/image = 'icons/ntos/file.png' // determines the icon to use, found in icons/ntos
 	var/obj/machinery/computer4/computer // the parent computer, if fixed
-	var/obj/item/part/computer4/storage/device // the device that is containing this file
-	var/datum/folder/folder //folder the program is in
+	var/holder	= null // location of the file (hdd, floppy, folder)
+	var/root	// is the file in the drive's root, if yes, holder is a drive, else, holder is a folder
+	var/obj/item/part/computer4/storage/drive	//reference TO the drive the file is on, different from holder if in a folder
 	var/hidden_file = 0 // Prevents file from showing up on NTOS program list.
 	var/drm	= 0			// Copy protection, called by copy() and move()
 	var/readonly = 0	// Edit protection, called by edit(), which is just a failcheck proc
@@ -22,13 +23,14 @@
 	// Copy file to device.
 	// If you overwrite this function, use the return value to make sure it succeeded
 	//
-	proc/copy(var/obj/item/part/computer4/storage/dest)
+	proc/copy(var/dest)
 		if(!computer || computer.crit_fail) return null
+		if((!istype(dest, /obj/item/part/computer4/storage))||(!istype(dest, /datum/file4/folder))) return 0//make sure w're actually copying TO a holder(folder/storage)
 		if(drm)
 			if(!computer.emagged)
 				return null
-		var/datum/file/F = new type()
-		if(!dest.addfile(F))
+		var/datum/file4/F = new type()
+		if(!dest:addfile(F))
 			return null // todo: arf here even though the player can't do a damn thing due to concurrency
 		return F
 
@@ -36,15 +38,16 @@
 	// Move file to device
 	// Returns null on failure even though the existing file doesn't go away
 	//
-	proc/move(var/obj/item/part/computer4/storage/dest)
+	proc/move(var/dest, var/source)
 		if(!computer || computer.crit_fail) return null
 		if(drm)
 			if(!computer.emagged)
 				return null
-		var/obj/item/part/computer4/storage/current = device
-		if(!dest.addfile(src))
+		if((!istype(dest, /obj/item/part/computer4/storage))||(!istype(dest, /datum/file4/folder))) return 0
+		if((!istype(source, /obj/item/part/computer4/storage))||(!istype(source, /datum/file4/folder))) return 0
+		if(!dest:addfile(src))
 			return null
-		current.removefile(src)
+		holder:removefile(src)
 		return src
 
 	//
@@ -58,6 +61,54 @@
 		if(readonly && !computer.emagged)
 			return 0 //
 		return 1
+
+	//
+	//gets the drive the file is located on, absolutely, and already places it in the drive var, but still returns a reference to the drive
+	//use this anytime you're doing ANYTHING with KB if the file's in a folder, incase the drive's volume changes
+	//takes note of floppies and actually sets drive to the floppy, if applicable
+	//
+	proc/get_drive()
+		var/D = src.holder
+		while(src && usr)
+			if(istype(D, /obj/item/part/computer4/storage)) break//if true, we have the drive, stop the loop
+			D = D:holder
+		if(istype(D, /obj/item/part/computer4/storage/removable))//we have a floppy instead of a HDD, set it accordingly.
+			drive = D:inserted
+			return D:inserted
+		else
+			drive = D
+			return D
+
+	//
+	//returns 1 if the src file has either drm, readonly, or both enabled, dependant on bitflags in setup.dm
+	//
+
+	proc/check_access_level(var/aclevel)
+		if(!aclevel)
+			return 1//well, every file has an empty access level, depends on your perspective I guess, not that this should matter but you never know when somebody fucks up code
+		if(aclevel & READ_ONLY)
+			if(src.readonly)
+				return 1
+		if(aclevel & DRM)
+			if(src.drm)
+				return 1
+		else//okay, it can't be anything BUT both now
+			if(src.drm && src.readonly)
+				return 1
+		return 0
+
+	//
+	//returns a list of all folders "above" this file, in the file directory
+	//
+
+	proc/list_holders()
+		if(!istype(holder, /datum/file4/folder))
+			return null//our holder is a storage device, if you want the storage device, use get_drive()
+		var/list/holders = holder:list_holders()
+		if(holders)//if our holder has any folder holders, return the holder's returned list + our holder, else, just return holder
+			holders.Add(holder)
+			return holders
+		return holder
 
 /*
 	Centcom root authorization certificate

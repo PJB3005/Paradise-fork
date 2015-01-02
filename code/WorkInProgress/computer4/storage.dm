@@ -34,11 +34,18 @@
 
 	// Add a file to the hard drive, returns 0 if failed
 	// forced is used when spawning files on a write-protect drive
-	proc/addfile(var/datum/file/F,var/forced = 0)
+	proc/addfile(var/datum/file4/F,var/forced = 0)
 		if(!F || crit_fail || (F in files))
 			return 1
 		if(writeprotect && !forced)
 			return 0
+		for(var/datum/file4/N in files)
+			if((N.name == F.name) && (N.extension == F.extension))//somebody's trying to add files with the same name and extension, no.
+				return 0
+		if(istype(F, /datum/file4/folder) && F.holder == src)//if the holder isn't the src, the folder was in the process of moval, don't delete sub-files in that case
+			if(F:delete_sub_files(forced)) // only thing actually deleting here is BYOND's garbage collection, but that's not gonna work for folders, as files in a folder are gonna reference to the folder and back, calling this here so nothing's gonna get deleted if there's a read only for example
+				return 0//we can't delete all files sub src folder, or something went horribly wrong, cancel the delete, if the latter, something might still be salvageable
+
 		if(volume + F.volume > max_volume)
 			if(!forced)
 				return 0
@@ -47,9 +54,10 @@
 		files.Add(F)
 		volume += F.volume
 		F.computer = computer
-		F.device = src
+		F.holder = src
+		F.root = 1
 		return 1
-	proc/removefile(var/datum/file/F,var/forced = 0)
+	proc/removefile(var/datum/file4/F,var/forced = 0)
 		if(!F || !(F in files))
 			return 1
 		if(writeprotect && !forced)
@@ -57,10 +65,42 @@
 
 		files -= F
 		volume -= F.volume
-		if(F.device == src)
-			F.device = null
+		if(F.holder == src)
+			F.holder = null
 			F.computer = null
 		return 1
+
+
+	//
+	//recalculates the drive's volume, by checking every file's volume and adding that together
+	//if the drive's volume exceeds the max, and it's NOT forced, crash the computer, and wipe the storage device to prevent a proc crash in the future
+	//if it is forced though, increase the storage device's size to accomodate
+	//not that this proc should EVER be called with forced in a situation in which it matters
+	//(seriously, don't let THIS proc of all things take care of drive size increases, it's here to for safety ONLY)
+	//
+	proc/update_volume(var/forced = 0)
+		volume = 0	//empty the disk, this'll take care of possible fuckups on another coder's part too
+		for(var/datum/file4/F in files)
+			volume += F.volume
+		if(volume > max_volume)//we have a problem, something fucked up somewhere down the line, and now I gotta fix it, yay
+			if(!forced)
+				testing("Computer [src.computer]'s drive [src] exceeded max volume in update_volume(), this should NOT be happening!")
+				Wipe()//let's just assume the drive had a fatal error because of what just happened, and that's how NT brand storage devices react to this kind of stuff, alternatively I could add drive formatting later on and make it corrupt the drive, instead, that works too, probably
+				computer.Crash(BUSTED_ASS_COMPUTER)//computer should've just crashed because of the OS getting wiped, if it wasn't on floppy, not that it's that big of a deal though
+				return 0//Highly doubt this is still gonna matter since the computer reset since, not that this should happen in the first place though
+			max_volume += (volume - max_volume)
+			testing("Computer [src.computer]'s drive [src] exceeded max volume in update_volume(), drive size forced increased to [max_volume], this should NOT be happening!")
+			return 1
+		return 1
+
+	//
+	//Wipes the storage device, sets volume to 0, USES FORCED
+	//DO NOT USE THIS PROC LIGHTLY, IMAGINE THIS AS THE DRIVE CORRUPTING
+	//
+	proc/Wipe()
+		for(var/datum/file4/F in files)
+			removefile(F, 1)
+		volume = 0
 
 	init(var/obj/machinery/computer/target)
 		computer = target
@@ -139,7 +179,7 @@
 
 		..()
 
-	addfile(var/datum/file/F)
+	addfile(var/datum/file4/F)
 		if(!F || !inserted)
 			return 0
 
@@ -151,7 +191,8 @@
 
 		inserted.files.Add(F)
 		F.computer = computer
-		F.device = inserted
+		F.holder = inserted
+		F.root = 1
 		return 1
 
 /*

@@ -913,6 +913,10 @@ var/list/RESTRICTED_CAMERA_NETWORKS = list( //Those networks can only be accesse
  #define FILE_DRM      16  // Some files want to not be copied/moved.  This is them complaining that you tried.
  #define NETWORK_FAILURE  32
 
+//computer4 access level check codes, for use in /datum/file4/folder/proc/check_not_sub_access_level() and check_access_level()
+#define READ_ONLY 1
+#define DRM 2
+
 //Some on_mob_life() procs check for alien races.
 #define IS_DIONA 1
 #define IS_VOX 2
