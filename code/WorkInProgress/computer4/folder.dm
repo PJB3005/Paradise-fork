@@ -125,6 +125,7 @@ A file in a folder isn't on the drive, it's in a folder, with the folder adjusti
 
 /datum/file4/folder/move(var/dest, var/source)
 	if(!computer || computer.crit_fail) return null
-	if(src in list_holders())//make sure we're not moving a folder into itself, it would be pretty bad, and probably start an infinite loop and shit
-		return 0
+	if(istype(dest, /datum/file4/folder))
+		if(src in dest:list_holders())//make sure we're not moving a folder into itself, it would be pretty bad, and probably start an infinite loop and shit
+			return 0
 	..()
