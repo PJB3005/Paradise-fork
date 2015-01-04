@@ -10,7 +10,6 @@
 	var/fileop = "runfile"
 	var/datum/file4/buffer//used fot example to copy files
 	var/list/alertmsgs = list()//alert message displayed at the bottom of the window, list for proper trackkeeping incase there's multiple errors
-	var/
 /*
 	Generate a basic list of files in the selected scope
 */
@@ -86,7 +85,7 @@
 		if(istype(current, /datum/file4/folder))
 			dat += "<a href='?src=\ref[src];folderup'>UP</a> "
 		dat += "<a href='?src=\ref[src];changefileop=copyfile'>Copy file</a> "
-		dat += "<a href='?src=\ref[src];changefileop=cutfile'>Cut file</a> "
+	//	dat += "<a href='?src=\ref[src];changefileop=cutfile'>Cut file</a> "
 		dat += (buffer ? "<a href='?src=\ref[src];pastefile'>Paste file</a> " : "")
 		dat += "<a href='?src=\ref[src];changefileop=renamefile'>rename</a> "
 		dat += "<a href='?src=\ref[src];newfolder'>New folder</a> "
@@ -100,10 +99,12 @@
 				dat += "cutting"
 			if("copyfile")
 				dat += "copying"
-			if("rename")
+			if("renamefile")
 				dat += "renaming"
 
 		dat += "  <a href='?src=\ref[src];changefileop=runfile'>\[CANCEL\]</a>"
+	if(buffer)
+		dat += "<br>File in buffer: [buffer.name].[buffer.extension] <a href='?src=\ref[src];emptybuffer'><span class='alert'>\[EMPTY BUFFER\]</span></a>"
 	return dat
 
 
@@ -188,7 +189,7 @@
 			left:80px;
 			top:434px;
 			width:480px;
-			height:60px;
+			height:[16*alertmsgs.len]px;
 			border:2px inset black;
 			background-color:#252525;
 			color:#cc4040;
@@ -207,7 +208,7 @@
 	else
 		dat += desktop()
 
-	dat += alertmsg
+	dat += msgbar()
 
 	dat += "</div></body></html>"
 
@@ -240,34 +241,25 @@
 	dat += "<br>"
 	return dat
 
-//
-//adds an alert to the bottom of the NTOS window, can use hrefs and stuff, vars:
-//content = content os the error, most important
-//dissmissable = just adds a href to dismiss the alert, just for easyness's sake
-//error = preset for errors, because those'll happen a lot
-//
+/datum/file4/program/ntos/proc/msgbar()
+	var/index = 0
+	var/dat = "<div class='msgbar'><span class='warning'>"
+	for(var/msg in alertmsgs)
+		msg = alertmsgs[msg]
+		dat += msg
+		dat += "<a href='?src=\ref[src];dismissalert=[index]'>\[DISMISS\]</a><br>"
+		index++
+	dat += "</span></div>"
+	return dat
 
-/datum/file4/program/ntos/proc/addalertmsg(var/content, var/dismissable = 1, var/error = 1)
-	var/dat = "<div class='msgbar'>"
-	if(error)
-		dat += "<span class='warning'>ERROR: "
-	dat += content
-	if(error)
-		dat += "</span>"
-	if(dissmissable)
-		dat += "<a href'?src=\ref[src];dismissalert'>DISMISS<a>"
-	dat += "</div>"
+/datum/file4/program/ntos/proc/addalertmsg(var/cont)
+	var/list/dat = list((alertmsgs.len + 1) = cont)
 	alertmsgs.Add(dat)
+	return alertmsgs.len
 
-
-//removes the current alertmessage, and replaces it with soemthing in the que if possible
-
-/datum/file4/program/ntos/proc/removealertmsg()
-	if(alertque[1])
-		alertmsg = alertque[1]
-		alertque.Remove(alertque[1])
-	else
-		alertmsg = ""
+/datum/file4/program/ntos/proc/removealertmsg(var/num)
+	alertmsgs.Remove(num)
+	return 1
 
 /datum/file4/program/ntos/Topic(href, list/href_list)
 	if(!interactable() || ..(href,href_list))
@@ -301,7 +293,6 @@
 		return
 
 	if("runfile" in href_list)//NTOS handles folder opening on its own
-		world << "test"
 		var/datum/file4/F = locate(href_list["runfile"])
 		if(istype(F, /datum/file4/folder))
 			current = F
@@ -325,17 +316,47 @@
 	if("renamefile" in href_list)
 		var/datum/file4/F = locate(href_list["renamefile"])
 		F.name = input("Choose a new file name", "File name", F.name) as text
-		interact()
 		fileop = "runfile"
+		interact()
 		return
 
 	if("changefileop" in href_list)
 		var/op = href_list["changefileop"]
 		fileop = op
 		interact()
+		return
+
+	if("dismissalert" in href_list)
+		var/num = href_list["dismissalert"]
+		removealertmsg(num)
+		interact()
+		return
 
 	if("copyfile" in href_list)
+		var/datum/file4/F = locate(href_list["copyfile"])
+		buffer = F
+		fileop = "runfile"
+		interact()
+		return
 
+	if("emptybuffer" in href_list)
+		buffer = null
+		interact()
+		return
+
+	if("pastefile" in href_list)
+		if(!buffer)
+			return 0
+		buffer.copy(current)
+		interact()
+		return
+
+	if("delfile" in href_list)
+		var/datum/file4/F = locate(href_list["delfile"])
+		F.holder:removefile(F)
+		fileop = "runfile"
+		interact()
+		return
 
 #undef MAX_ROWS
 #undef MAX_COLUMNS

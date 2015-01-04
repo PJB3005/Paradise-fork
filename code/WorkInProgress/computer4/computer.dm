@@ -20,7 +20,7 @@
 	// For these, typepaths are used, NOT objects
 
 	var/default_prog		= null											// the program running when spawned
-	var/list/spawn_files	= list()										// files added when spawned
+	var/list/spawn_files	= list(/datum/file4/data)										// files added when spawned
 	var/list/spawn_parts	= list(/obj/item/part/computer4/storage/hdd/big)	// peripherals to spawn
 
 	// Computer3 components - put an object in them in New() when not built

@@ -25,7 +25,7 @@
 	//
 	proc/copy(var/dest)
 		if(!computer || computer.crit_fail) return null
-		if((!istype(dest, /obj/item/part/computer4/storage))||(!istype(dest, /datum/file4/folder))) return 0//make sure w're actually copying TO a holder(folder/storage)
+		if((!istype(dest, /obj/item/part/computer4/storage))&&(!istype(dest, /datum/file4/folder))) return 0//make sure w're actually copying TO a holder(folder/storage)
 		if(drm)
 			if(!computer.emagged)
 				return null
@@ -43,8 +43,8 @@
 		if(drm)
 			if(!computer.emagged)
 				return null
-		if((!istype(dest, /obj/item/part/computer4/storage))||(!istype(dest, /datum/file4/folder))) return 0
-		if((!istype(source, /obj/item/part/computer4/storage))||(!istype(source, /datum/file4/folder))) return 0
+		if((!istype(dest, /obj/item/part/computer4/storage))&&(!istype(dest, /datum/file4/folder))) return 0
+		if((!istype(source, /obj/item/part/computer4/storage))&&(!istype(source, /datum/file4/folder))) return 0
 		if(!dest:addfile(src))
 			return null
 		holder:removefile(src)

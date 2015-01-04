@@ -10,7 +10,7 @@ A file in a folder isn't on the drive, it's in a folder, with the folder adjusti
 	extension = "fol"
 	volume = 1//1 for balancing, know it isn't realistic
 	var/list/files = list()
-
+	image = 'icons/ntos/folder.png'
 //
 //checks if adding V amount of volume to the drive will work
 //folder's addfile calls this, but doesn't bother if it's a forced write, just remember to have other procs inherit the force, in that case
@@ -62,13 +62,14 @@ A file in a folder isn't on the drive, it's in a folder, with the folder adjusti
 
 //removes files
 /datum/file4/folder/proc/removefile(var/datum/file4/F, var/forced = 0)
-	if(!F || (F in files))
+	if(!F || !(F in files))
 		return 1
 	if(readonly && !forced)
 		return 0
 
 	if(istype(F, /datum/file4/folder) && F.holder == src)//if the holder isn't the src, the folder was in the process of moval, don't delete sub-files in that case
 		if(F:delete_sub_files(forced)) // only thing actually deleting here is BYOND's garbage collection, but that's not gonna work for folders, as files in a folder are gonna reference to the folder and back, calling this here so nothing's gonna get deleted if there's a read only for example
+			update_volume()
 			return 0//we can't delete all files sub src folder, or something went horribly wrong, cancel the delete, if the latter, something might still be salvageable
 	files -= F
 	volume -= F.volume
@@ -111,7 +112,7 @@ A file in a folder isn't on the drive, it's in a folder, with the folder adjusti
 
 /datum/file4/folder/copy(var/dest)
 	if(!computer || computer.crit_fail) return null
-	if(!istype(dest, /obj/item/part/computer4/storage)||!istype(dest, /datum/file4/folder)) return 0//make sure w're actually copying TO a holder(folder/storage)
+	if(!istype(dest, /obj/item/part/computer4/storage)&&!istype(dest, /datum/file4/folder)) return 0//make sure w're actually copying TO a holder(folder/storage)
 	if(drm && !computer.emagged)
 		return null
 
@@ -125,7 +126,7 @@ A file in a folder isn't on the drive, it's in a folder, with the folder adjusti
 
 /datum/file4/folder/move(var/dest, var/source)
 	if(!computer || computer.crit_fail) return null
-	if(istype(dest, /datum/file4/folder))
+	if(istype(dest, /datum/file4/folder) && istype(dest, /obj/item/part/computer4/storage))
 		if(src in dest:list_holders())//make sure we're not moving a folder into itself, it would be pretty bad, and probably start an infinite loop and shit
 			return 0
 	..()
