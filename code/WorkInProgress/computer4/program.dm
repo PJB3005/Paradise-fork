@@ -238,9 +238,11 @@ Programs are a file that can be executed
 	// executes the file
 	//
 	if("runfile" in href_list)
-		var/datum/file/F = locate(href_list["runfile"])
+		var/datum/file4/F = locate(href_list["runfile"])
 		if(istype(F) && F.computer == computer)
 			F.execute(src)
+		if(istype(F, /datum/file4/folder))//quick and dirty way to make NTOS run it's own topic(), so folders can be opened, not doing this in folder execute for a variety of reasons, like shit bugging out
+			return 0
 		return 1
 
 	if("close" in href_list)

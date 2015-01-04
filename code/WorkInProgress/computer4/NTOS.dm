@@ -6,22 +6,24 @@
 	name = "Nanotrasen Operating System"
 	extension = "prog"
 	active_state = "ntos"
-	var/obj/item/part/computer/storage/current // the drive being viewed, null for desktop/computer
+	var/current // the drive being viewed, null for desktop/computer
 	var/fileop = "runfile"
-
+	var/datum/file4/buffer//used fot example to copy files
+	var/list/alertmsgs = list()//alert message displayed at the bottom of the window, list for proper trackkeeping incase there's multiple errors
+	var/
 /*
 	Generate a basic list of files in the selected scope
 */
 
 /datum/file4/program/ntos/proc/list_files()
 	if(!computer || !current) return null
-	return current.files
+	return current:files
 
 
 /datum/file4/program/ntos/proc/filegrid(var/list/filelist)
 	var/dat = "<table border='0' align='left'>"
 	var/i = 0
-	for(var/datum/file/F in filelist)
+	for(var/datum/file4/F in filelist)
 		if(!F.hidden_file)
 			i++
 			if(i==1)
@@ -49,7 +51,7 @@
 	var/dat = "<table border='0' align='left'>"
 	var/i = 0
 	var/list/peripherals = list(computer.hdd,computer.floppy,computer.cardslot)
-	for(var/obj/item/part/computer/C in peripherals)
+	for(var/obj/item/part/computer4/C in peripherals)
 		if(!istype(C)) continue
 		i++
 		if(i==1)
@@ -78,10 +80,32 @@
 		<div class='contentpane'>[content]</div>
 	</div>"}
 
-/datum/file4/program/ntos/proc/buttonbar(var/type = 0)
-	switch(type)
-		if(0) // FILE OPERATIONS
-			return {""}
+/datum/file4/program/ntos/proc/buttonbar()
+	var/dat = ""
+	if(fileop == "runfile")//no operation is in progress
+		if(istype(current, /datum/file4/folder))
+			dat += "<a href='?src=\ref[src];folderup'>UP</a> "
+		dat += "<a href='?src=\ref[src];changefileop=copyfile'>Copy file</a> "
+		dat += "<a href='?src=\ref[src];changefileop=cutfile'>Cut file</a> "
+		dat += (buffer ? "<a href='?src=\ref[src];pastefile'>Paste file</a> " : "")
+		dat += "<a href='?src=\ref[src];changefileop=renamefile'>rename</a> "
+		dat += "<a href='?src=\ref[src];newfolder'>New folder</a> "
+		dat += "<a href='?src=\ref[src];changefileop=delfile'>Delete file</a> "
+	else
+		dat += "Select file for "
+		switch(fileop)
+			if("delfile")
+				dat += "deleting"
+			if("cutfile")
+				dat += "cutting"
+			if("copyfile")
+				dat += "copying"
+			if("rename")
+				dat += "renaming"
+
+		dat += "  <a href='?src=\ref[src];changefileop=runfile'>\[CANCEL\]</a>"
+	return dat
+
 
 /datum/file4/program/ntos/interact()
 	if(!interactable())
@@ -94,7 +118,7 @@
 		div.filewin {
 			position:absolute;
 			left:80px;
-			top:114px;
+			top:74px;
 			width:480px;
 			height:360px;
 			border:2px inset black;
@@ -159,6 +183,16 @@
 		a img {
 			border: none;
 		}
+		div.msgbar {
+			position:absolute;
+			left:80px;
+			top:434px;
+			width:480px;
+			height:60px;
+			border:2px inset black;
+			background-color:#252525;
+			color:#cc4040;
+		}
 
 	</style>
 	</head>
@@ -169,9 +203,11 @@
 	dat += generate_status_bar()
 	var/list/files = list_files()
 	if(current)
-		dat +=window(current.name,buttonbar(),filegrid(files))
+		dat +=window(current:name,buttonbar(),filegrid(files))
 	else
 		dat += desktop()
+
+	dat += alertmsg
 
 	dat += "</div></body></html>"
 
@@ -204,24 +240,53 @@
 	dat += "<br>"
 	return dat
 
+//
+//adds an alert to the bottom of the NTOS window, can use hrefs and stuff, vars:
+//content = content os the error, most important
+//dissmissable = just adds a href to dismiss the alert, just for easyness's sake
+//error = preset for errors, because those'll happen a lot
+//
+
+/datum/file4/program/ntos/proc/addalertmsg(var/content, var/dismissable = 1, var/error = 1)
+	var/dat = "<div class='msgbar'>"
+	if(error)
+		dat += "<span class='warning'>ERROR: "
+	dat += content
+	if(error)
+		dat += "</span>"
+	if(dissmissable)
+		dat += "<a href'?src=\ref[src];dismissalert'>DISMISS<a>"
+	dat += "</div>"
+	alertmsgs.Add(dat)
+
+
+//removes the current alertmessage, and replaces it with soemthing in the que if possible
+
+/datum/file4/program/ntos/proc/removealertmsg()
+	if(alertque[1])
+		alertmsg = alertque[1]
+		alertque.Remove(alertque[1])
+	else
+		alertmsg = ""
+
 /datum/file4/program/ntos/Topic(href, list/href_list)
 	if(!interactable() || ..(href,href_list))
 		return
 
 	if("viewperipheral" in href_list) // open drive, show status of peripheral
-		var/obj/item/part/computer/C = locate(href_list["viewperipheral"])
+		var/obj/item/part/computer4/C = locate(href_list["viewperipheral"])
 		if(!istype(C) || (C.loc != src.computer))
 			return
 
-		if(istype(C,/obj/item/part/computer/storage))
+		if(istype(C,/obj/item/part/computer4/storage))
 			current = C
 			interact()
 			return
 		// else ???
-		if(istype(C,/obj/item/part/computer/cardslot))
+		if(istype(C,/obj/item/part/computer4/cardslot))
 			if(computer.cardslot.reader != null)
 				computer.cardslot.remove()
-		if(istype(C,/obj/item/part/computer/cardslot/dual))
+		if(istype(C,/obj/item/part/computer4/cardslot/dual))
 			if(computer.cardslot.writer != null)
 				computer.cardslot.remove(computer.cardslot.writer)
 			if(computer.cardslot.reader != null)
@@ -234,6 +299,43 @@
 		current = null
 		interact()
 		return
+
+	if("runfile" in href_list)//NTOS handles folder opening on its own
+		world << "test"
+		var/datum/file4/F = locate(href_list["runfile"])
+		if(istype(F, /datum/file4/folder))
+			current = F
+			interact()
+			return
+		return
+
+	if("newfolder" in href_list)
+		var/datum/file4/folder/F = new()
+		current:addfile(F)
+		interact()
+		return
+
+	if("folderup" in href_list)
+		if(!istype(current, /datum/file4/folder))//safety check
+			return
+		current = current:holder
+		interact()
+		return
+
+	if("renamefile" in href_list)
+		var/datum/file4/F = locate(href_list["renamefile"])
+		F.name = input("Choose a new file name", "File name", F.name) as text
+		interact()
+		fileop = "runfile"
+		return
+
+	if("changefileop" in href_list)
+		var/op = href_list["changefileop"]
+		fileop = op
+		interact()
+
+	if("copyfile" in href_list)
+
 
 #undef MAX_ROWS
 #undef MAX_COLUMNS
