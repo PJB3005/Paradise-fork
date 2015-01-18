@@ -268,6 +268,9 @@
 	src.dna = chosen_dna.Clone()
 	src.real_name = chosen_dna.real_name
 	src.flavor_text = ""
+	if(ishuman(src))
+		var/mob/living/carbon/human/H = src
+		H.set_species()
 	src.UpdateAppearance()
 	domutcheck(src, null)
 
@@ -408,7 +411,7 @@
 	O.dna = C.dna.Clone()
 	C.dna = null
 	O.real_name = chosen_dna.real_name
-
+	O.set_species()
 	for(var/obj/T in C)
 		del(T)
 
@@ -573,6 +576,8 @@
 	C.SetParalysis(0)
 	C.SetStunned(0)
 	C.SetWeakened(0)
+	C.adjustStaminaLoss(-75)
+	C.reagents.add_reagent("synaptizine", 20)
 	C.lying = 0
 	C.update_canmove()
 
@@ -727,7 +732,7 @@ var/list/datum/dna/hivemind_bank = list()
 		src << "<span class='notice'>We return our vocal glands to their original location.</span>"
 		return
 
-	var/mimic_voice = input("Enter a name to mimic.", "Mimic Voice", null) as text
+	var/mimic_voice = stripped_input(usr, "Enter a name to mimic.", "Mimic Voice", null, MAX_NAME_LEN)
 	if(!mimic_voice)
 		return
 
@@ -769,7 +774,7 @@ var/list/datum/dna/hivemind_bank = list()
 	if(!(T in view(changeling.sting_range))) return
 	if(!sting_can_reach(T, changeling.sting_range)) return
 	if(!changeling_power(required_chems)) return
-	
+
 	if(ishuman(T))
 		var/mob/living/carbon/human/H = T
 		if(H.species.flags & IS_SYNTHETIC)

@@ -39,8 +39,10 @@ var/can_call_ert
 	trigger_armed_response_team(1)
 
 
-client/verb/JoinResponseTeam()
-	set category = "IC"
+/mob/dead/observer/verb/JoinResponseTeam()
+	set category = "Ghost"
+	set name = "Join Emergency Response Team"
+	set desc = "Join the Emergency Response Team. Only possible if it has been called by the crew."
 
 	if(istype(usr,/mob/dead/observer) || istype(usr,/mob/new_player))
 		if(!send_emergency_team)
@@ -63,7 +65,10 @@ client/verb/JoinResponseTeam()
 				L.name = "Commando"
 				return
 			var/leader_selected = isemptylist(response_team_members)
-			var/mob/living/carbon/human/new_commando = create_response_team(L.loc, leader_selected, new_name)
+			if(!src.client)
+				return
+			var/client/C = src.client
+			var/mob/living/carbon/human/new_commando = C.create_response_team(L.loc, leader_selected, new_name)
 			del(L)
 			new_commando.mind.key = usr.key
 			new_commando.key = usr.key
@@ -284,11 +289,11 @@ proc/trigger_armed_response_team(var/force = 0)
 /mob/living/carbon/human/proc/equip_strike_team(leader_selected = 0)
 
 	//Special radio setup
-	equip_to_slot_or_del(new /obj/item/device/radio/headset/ert(src), slot_l_ear)
+	equip_to_slot_or_del(new /obj/item/device/radio/headset/ert/alt(src), slot_l_ear)
 
 	//Replaced with new ERT uniform
 	equip_to_slot_or_del(new /obj/item/clothing/under/rank/centcom_officer(src), slot_w_uniform)
-	equip_to_slot_or_del(new /obj/item/clothing/shoes/swat(src), slot_shoes)
+	equip_to_slot_or_del(new /obj/item/clothing/shoes/combat(src), slot_shoes)
 	equip_to_slot_or_del(new /obj/item/device/radio/headset/ert(src), slot_l_ear)
 	equip_to_slot_or_del(new /obj/item/clothing/glasses/sunglasses(src), slot_glasses)
 	equip_to_slot_or_del(new /obj/item/weapon/storage/backpack/satchel(src), slot_back)
@@ -300,16 +305,17 @@ proc/trigger_armed_response_team(var/force = 0)
 	W.icon_state = "centcom"
 	W.access = get_all_accesses()
 	W.access += list(access_cent_general, access_cent_living, access_cent_storage)
-	
+
 	var/obj/item/device/pda/heads/pda = new(src)
 	pda.owner = real_name
 	pda.ownjob = "Emergency Response Team[leader_selected ? " Leader" : ""]"
 	pda.name = "PDA-[real_name] ([pda.ownjob])"
-	
+	equip_to_slot_or_del(pda, slot_wear_pda)
+
 	if (leader_selected)
 		W.access += access_cent_teleporter
 	equip_to_slot_or_del(W, slot_wear_id)
-	
+
 	// Loyalty implant
 	var/obj/item/weapon/implant/loyalty/L = new/obj/item/weapon/implant/loyalty(src)
 	L.imp_in = src

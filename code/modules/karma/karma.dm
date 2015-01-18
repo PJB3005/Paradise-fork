@@ -114,7 +114,7 @@ var/list/karma_spenders = list()
 	var/choice = input("Give [M.name] good karma?", "Karma") in list("Good", "Cancel")
 	if(!choice || choice == "Cancel")
 		return
-	if(choice == "Good")
+	if(choice == "Good" && !(src.client.karma_spent))
 		M.client.karma += 1
 		usr << "[choice] karma spent on [M.name]."
 		src.client.karma_spent = 1
@@ -184,9 +184,7 @@ You've gained <b>[totalkarma]</b> total karma in your time here.<br>"}
 			dat += {"
 			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=1'>Unlock Barber -- 5KP</a><br>
 			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=2'>Unlock Brig Physician -- 5KP</a><br>
-			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=8'>Unlock Nanotrasen Recruiter -- 10KP</a><br>
 			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=3'>Unlock Nanotrasen Representative -- 30KP</a><br>
-			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=4'>Unlock Customs Officer -- 30P</a><br>
 			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=5'>Unlock Blueshield -- 30KP</a><br>
 			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=9'>Unlock Security Pod Pilot -- 30KP</a><br>
 			<a href='?src=\ref[src];karmashop=shop;KarmaBuy=6'>Unlock Mechanic -- 30KP</a><br>
@@ -204,33 +202,37 @@ You've gained <b>[totalkarma]</b> total karma in your time here.<br>"}
 			
 		if (2) // Karma Refunds
 			var/list/refundable = list()
-			if(checkpurchased("Tajaran Ambassador"))
+			var/list/purchased = checkpurchased()
+			if("Tajaran Ambassador" in purchased)
 				refundable += "Tajaran Ambassador"
 				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Tajaran Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Tajaran Ambassador -- 30KP</a><br>"
-			if(checkpurchased("Unathi Ambassador"))
+			if("Unathi Ambassador" in purchased)
 				refundable += "Unathi Ambassador"
 				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Unathi Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Unathi Ambassador -- 30KP</a><br>"	
-			if(checkpurchased("Skrell Ambassador"))
+			if("Skrell Ambassador" in purchased)
 				refundable += "Skrell Ambassador"
 				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Skrell Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Skrell Ambassador -- 30KP</a><br>"	
-			if(checkpurchased("Diona Ambassador"))
+			if("Diona Ambassador" in purchased)
 				refundable += "Diona Ambassador"
 				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Diona Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Diona Ambassador -- 30KP</a><br>"	
-			if(checkpurchased("Kidan Ambassador"))
+			if("Kidan Ambassador" in purchased)
 				refundable += "Kidan Ambassador"
 				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Kidan Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Kidan Ambassador -- 30KP</a><br>"	
-			if(checkpurchased("Kidan Ambassador"))
-				refundable += "Kidan Ambassador"
-				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Kidan Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Kidan Ambassador -- 30KP</a><br>"	
-			if(checkpurchased("Slime People Ambassador"))
+			if("Slime People Ambassador" in purchased)
 				refundable += "Slime People Ambassador"
 				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Slime People Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Slime People Ambassador -- 30KP</a><br>"	
-			if(checkpurchased("Grey Ambassador"))
+			if("Grey Ambassador" in purchased)
 				refundable += "Grey Ambassador"
 				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Grey Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Grey Ambassador -- 30KP</a><br>"	
-			if(checkpurchased("Vox Ambassador"))
+			if("Vox Ambassador" in purchased)
 				refundable += "Vox Ambassador"
-				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Vox Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Vox Ambassador -- 30KP</a><br>"				
+				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Vox Ambassador;KarmaRefundType=job;KarmaRefundCost=30'>Refund Vox Ambassador -- 30KP</a><br>"
+			if("Customs Officer" in purchased)
+				refundable += "Customs Officer"
+				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Customs Officer;KarmaRefundType=job;KarmaRefundCost=30'>Refund Customs Officer -- 30KP</a><br>"	
+			if("Nanotrasen Recruiter" in purchased)
+				refundable += "Nanotrasen Recruiter"
+				dat += "<a href='?src=\ref[src];karmashop=shop;KarmaRefund=Nanotrasen Recruiter;KarmaRefundType=job;KarmaRefundCost=10'>Refund Nanotrasen Recruiter -- 10KP</a><br>"				
 
 			if(!refundable.len)
 				dat += "You do not have any refundable karma purchases.<br>"
@@ -361,6 +363,10 @@ You've gained <b>[totalkarma]</b> total karma in your time here.<br>"}
 		cost = 30
 	else if(name == "Vox Ambassador")
 		cost = 30
+	else if(name == "Customs Officer")
+		cost = 30
+	else if(name == "Nanotrasen Recruiter")
+		cost = 10
 	else
 		usr << "\red That job is not refundable."	
 		return
@@ -404,7 +410,7 @@ You've gained <b>[totalkarma]</b> total karma in your time here.<br>"}
 	else
 		usr << "\red Your ckey ([dbckey]) was not found."	
 		
-/client/proc/checkpurchased(var/name)
+/client/proc/checkpurchased(var/name = null) // If the first parameter is null, return a full list of purchases
 	var/DBQuery/query = dbcon.NewQuery("SELECT * FROM whitelist WHERE ckey='[usr.key]'")
 	query.Execute()	
 	
@@ -420,9 +426,12 @@ You've gained <b>[totalkarma]</b> total karma in your time here.<br>"}
 		var/list/joblist = text2list(dbjob,",")
 		var/list/specieslist = text2list(dbspecies,",")
 		var/list/combinedlist = joblist + specieslist
-		if(name in combinedlist)
-			return 1
+		if(name)
+			if(name in combinedlist)
+				return 1
+			else
+				return 0
 		else
-			return 0
+			return combinedlist
 	else
 		return 0	

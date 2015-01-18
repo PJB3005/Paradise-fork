@@ -163,7 +163,7 @@
 	category = list("initial", "Miscellaneous")
 	
 /datum/design/prox_sensor
-	name = "Proximity sensor"
+	name = "Proximity Sensor"
 	id = "prox_sensor"
 	build_type = AUTOLATHE
 	materials = list("$metal" = 800, "$glass" = 200)
@@ -187,7 +187,7 @@
 	category = list("initial", "Miscellaneous")	
 	
 /datum/design/voice_analyser
-	name = "Voice analyser"
+	name = "Voice Analyser"
 	id = "voice_analyser"
 	build_type = AUTOLATHE
 	materials = list("$metal" = 500, "$glass" = 50)
@@ -233,6 +233,14 @@
 	materials = list("$metal" = MINERAL_MATERIAL_AMOUNT)
 	build_path = /obj/item/stack/sheet/metal
 	category = list("initial","Construction")
+	
+/datum/design/newscaster_frame
+	name = "Newscaster Frame"
+	id = "newscaster_frame"
+	build_type = AUTOLATHE
+	materials = list("$metal" = 14000, "$glass" = 8000)
+	build_path = /obj/item/newscaster_frame
+	category = list("initial", "Construction")
 
 /datum/design/rcd_ammo
 	name = "Compressed Matter Cardridge"

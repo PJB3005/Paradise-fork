@@ -68,6 +68,7 @@
 	new /obj/item/weapon/crowbar(src)
 	new /obj/item/weapon/wirecutters(src)
 	new /obj/item/device/t_scanner(src)
+	new /obj/item/weapon/extinguisher/mini(src)
 
 
 
@@ -92,7 +93,7 @@
 		"/obj/item/stack/medical",
 		"/obj/item/device/flashlight/pen",
 		"/obj/item/clothing/mask/surgical",
-		"/obj/item/clothing/gloves/latex",
+		"/obj/item/clothing/gloves/color/latex",
         "/obj/item/weapon/reagent_containers/hypospray/autoinjector"
 	)
 
@@ -177,3 +178,45 @@
 		"/obj/item/weapon/soap",
 		"/obj/item/weapon/holosign_creator"
 		)
+
+/obj/item/weapon/storage/belt/bandolier
+	name = "bandolier"
+	desc = "A bandolier for holding shotgun ammunition."
+	icon_state = "bandolier"
+	item_state = "bandolier"
+	storage_slots = 6
+	can_hold = list(
+		"/obj/item/ammo_casing/shotgun"
+		)
+
+/obj/item/weapon/storage/belt/bandolier/full/New()
+	..()
+	new /obj/item/ammo_casing/shotgun/beanbag(src)
+	new /obj/item/ammo_casing/shotgun/beanbag(src)
+	new /obj/item/ammo_casing/shotgun/beanbag(src)
+	new /obj/item/ammo_casing/shotgun/beanbag(src)
+	new /obj/item/ammo_casing/shotgun/beanbag(src)
+	new /obj/item/ammo_casing/shotgun/beanbag(src)
+
+/obj/item/weapon/storage/belt/wands
+	name = "wand belt"
+	desc = "A belt designed to hold various rods of power. A veritable fanny pack of exotic magic."
+	icon_state = "soulstonebelt"
+	item_state = "soulstonebelt"
+	storage_slots = 6
+	can_hold = list(
+		"/obj/item/weapon/gun/magic/wand"
+		)
+
+/obj/item/weapon/storage/belt/wands/full/New()
+	..()
+	new /obj/item/weapon/gun/magic/wand/death(src)
+	new /obj/item/weapon/gun/magic/wand/resurrection(src)
+	new /obj/item/weapon/gun/magic/wand/polymorph(src)
+	new /obj/item/weapon/gun/magic/wand/teleport(src)
+	new /obj/item/weapon/gun/magic/wand/door(src)
+	new /obj/item/weapon/gun/magic/wand/fireball(src)
+
+	for(var/obj/item/weapon/gun/magic/wand/W in contents) //All wands in this pack come in the best possible condition
+		W.max_charges = initial(W.max_charges)
+		W.charges = W.max_charges
